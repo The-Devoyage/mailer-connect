@@ -1,6 +1,6 @@
 export type ObjectID = string;
 
-export interface Custom {
+export interface DefaultContent {
   to: string;
   subject: string;
   html: string;
@@ -8,20 +8,13 @@ export interface Custom {
   layout?: ObjectID;
 }
 
-export interface Triggered {
+export interface TriggeredContent {
   trigger: string;
-  variables?: Record<string, any>[];
+  variables?: Record<string, any>;
   to: string;
 }
 
-interface TriggeredEmail {
-  triggered: Triggered;
-  custom?: never;
+export interface SendArgs {
+  triggeredContent?: TriggeredContent;
+  defaultContent: DefaultContent;
 }
-
-interface CustomEmail {
-  triggered?: never;
-  custom: Custom;
-}
-
-export type SendArgs = TriggeredEmail | CustomEmail;

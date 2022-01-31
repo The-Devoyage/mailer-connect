@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -30,7 +30,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@nickisyourfan/mailer-generator",
+  "name": "@nickisyourfan/mailer-connect",
   "author": "Nick",
   "module": "dist/mailer-generator.esm.js",
   "size-limit": [
@@ -55,4 +55,3 @@
     "axios": "^0.25.0"
   }
 }
-
