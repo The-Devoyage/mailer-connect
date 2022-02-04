@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SendArgs } from '../types';
 
-export class Mailer {
+export class MailerConnect {
   uri: string;
 
   constructor(config: { uri: string }) {

@@ -1,103 +1,134 @@
-# TSDX User Guide
+# Mailer Connect
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+This package is used to create an easy connection to the server running the `@the-devoyage/graphql-mailer` package.
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+## Install
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+After secure purchase from our [basetools account](https://basetools.io/checkout/wp7QYNNO), you will be granted access to the repo and package.
 
-## Commands
+`npm i @the-devoyage/mailer-connect`
 
-TSDX scaffolds your new library inside `/src`.
+## Usage
 
-To run TSDX, use:
+### Initialize
 
-```bash
-npm start # or yarn start
+Create as many connections as you need. Each can be exported under a different name.
+
+```ts
+// mailer.ts
+import { MailerConnect } from '@nickisyourfan/mailer-connect';
+
+export const mailer = new Mailer({ uri: 'http://mailer:5008/send' });
+export const devMailer = new Mailer({ uri: 'http://localhost:5008/send' });
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+### Send Mail
 
-To do a one-off build, use `npm run build` or `yarn build`.
+**Import Module**
 
-To run tests, use `npm test` or `yarn test`.
+Import the configured mailer throughout your project to call the `send` method.
 
-## Configuration
+```ts
+// Routes.ts
+import { mailer } from '../mailer';
 
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+app.post('/register', (req, res) => {
+  // ... Register Logic
+  if (success) {
+    mailer.send({});
+  }
+});
 ```
 
-### Rollup
+**Default Content**
 
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
+The required `defaultContent` property allows local HTML and email generation.
 
-### TypeScript
+```ts
+mailer.send({
+  defaultContent: {
+    subject: 'Email Updated',
+    to: account.email,
+    plainText:
+      'Your email has been updated. Please re-verify your account at www.my-business.com',
+    html:
+      '<h3>Success!</h3><p>Your email has been updated. Please re-verify your account at www.my-business.com.</p>',
+  },
+});
+```
 
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
+**Triggered Content**
 
-## Continuous Integration
+The optional `triggeredContent` property allows you to pass a `trigger` to the mailer service. The `graphql-mailer` service can then use the passed string to reference a HTML template that is stored on that server.
 
-### GitHub Actions
+```ts
+mailer.send({
+  triggeredContent: {
+    trigger: 'UPDATE_EMAIL',
+    to: account.email,
+  },
+  defaultContent: {
+    subject: 'Email Updated',
+    to: account.email,
+    plainText:
+      'Your email has been updated. Please re-verify your account at www.my-business.com',
+    html:
+      '<h3>Success!</h3><p>Your email has been updated. Please re-verify your account at <a href="www.my-business.com">Our Website</a>.</p>',
+  },
+});
+```
 
-Two actions are added by default:
+**Dynamic Variables**
 
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
+You can dynamically inject variables into both `HTML` and `plainText` properties.
 
-## Optimizations
+```ts
+mailer.send({
+  defaultContent: {
+    subject: 'Email Updated',
+    to: account.email,
+    plainText: `Hello, ${firat_name}, Your email has been updated. Please re-verify your account at www.my-business.com`,
+    html: `<h3>Success!</h3><p>Hello, ${first_name} Your email has been updated. Please re-verify your account at <a href="www.my-business.com">Our Website</a>.</p>`,
+  },
+});
+```
 
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
+Variables may also be passed to `triggeredContent`. They will be injected into the email content from the `graphql-mailer` service.
 
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
+```ts
+mailer.send({
+  triggeredContent: {
+    trigger: 'UPDATE_EMAIL',
+    to: account.email,
+    variables: account,
+  },
+  defaultContent: {
+    subject: 'Email Updated',
+    to: account.email,
+    plainText: `Hello, ${first_name}, Your email has been updated. Please re-verify your account at www.my-business.com`,
+    html: `<h3>Success!</h3><p>Hello, ${first_name} Your email has been updated. Please re-verify your account at <a href="www.my-business.com">Our Website</a>.</p>`,
+  },
+});
+```
 
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
+### Responses
+
+The `graphql-mailer` service will respond with a json object.
+
+```ts
+interface MailerPostResponse {
+  ok: boolean;
+  error?: string;
+  info?: SMTPTransport.SentMailInfo;
+}
+
+// From NodeMailer
+interface SentMessageInfo {
+  envelope: MimeNode.Envelope;
+  messageId: string;
+  accepted: Array<string | Mail.Address>;
+  rejected: Array<string | Mail.Address>;
+  pending: Array<string | Mail.Address>;
+  response: string;
 }
 ```
-
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
