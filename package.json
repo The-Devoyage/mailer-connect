@@ -30,7 +30,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "@nickisyourfan/mailer-connect",
+  "name": "@the-devoyage/mailer-connect",
   "author": "Nick",
   "module": "dist/mailer-generator.esm.js",
   "size-limit": [
@@ -53,5 +53,8 @@
   },
   "dependencies": {
     "axios": "^0.25.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
