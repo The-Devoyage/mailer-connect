@@ -4,9 +4,13 @@ This package is used to send webhooks for automated emails! Can be used with a c
 
 ## Install
 
-After secure purchase from our [basetools account](https://basetools.io/checkout/wp7QYNNO), you will be granted access to the repo and package.
+After secure purchase from our , you will be granted access to the repo and package.
 
 `npm i @the-devoyage/mailer-connect`
+
+## Show Some Love
+
+Using the `mailer-connect` package? [$ - Show Some Love - $](https://basetools.io/checkout/wp7QYNNO)
 
 ## Usage
 
