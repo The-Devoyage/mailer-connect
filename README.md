@@ -1,6 +1,6 @@
 # Mailer Connect
 
-This package is used to create an easy connection to the server running the `@the-devoyage/graphql-mailer` package.
+This package is used to send webhooks for automated emails! Can be used with a custom service or a server running the `@the-devoyage/graphql-mailer` service.
 
 ## Install
 
