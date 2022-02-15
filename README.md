@@ -4,9 +4,17 @@ This package is used to send webhooks for automated emails! Can be used with a c
 
 ## Install
 
-After secure purchase from our , you will be granted access to the repo and package.
+Login to the Github NPM Registry
 
-`npm i @the-devoyage/mailer-connect`
+```
+npm login --registry=https://npm.pkg/github.com
+```
+
+Install
+
+```
+npm i @the-devoyage/mailer-connect
+```
 
 ## Show Some Love
 
